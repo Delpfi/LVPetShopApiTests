@@ -68,7 +68,7 @@ class TestPet:
 
     #41 TestIT Добавление нового питомца c полными данными (POST /pet) LV
     @allure.title("Добавление нового питомца c полными данными")
-    def test_add_pet2(self):
+    def test_add_pet_full_data(self):
         with allure.step("Подготовка полных данных для создания питомца"):
             payload = {
                 "id": 10,
