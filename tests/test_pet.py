@@ -159,4 +159,4 @@ class TestPet:
 
         with allure.step("Проверка статуса ответа и формата данных"):
             assert response.status_code == expected_status_code
-            # assert isinstance(response.json(), list)
+            assert isinstance(response.json(), list)
