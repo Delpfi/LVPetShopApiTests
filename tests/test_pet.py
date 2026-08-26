@@ -157,6 +157,45 @@ class TestPet:
         with allure.step(f"Отправка запроса на получение питомца по статусу {status}"):
             response = requests.get(url=f"{BASE_URL}/pet/findByStatus", params={"status":{status}})
 
+    #вариант с логикой в одном тесте для разных статусов
         with allure.step("Проверка статуса ответа и формата данных"):
             assert response.status_code == expected_status_code
+            if expected_status_code == 200:
+                assert isinstance(response.json(), list)
+            elif expected_status_code == 400:
+                assert isinstance(response.json(), dict)
+
+    #Разделил на 2 отдельных теста позитивный и негативный сценарий
+    #Позитивный сценарий_успешный статус 200
+    @allure.title("Получение списка питомцев по успешному статусу")
+    @pytest.mark.parametrize(
+        "status_success, expected_status_code_success",
+        [("available", 200),
+         ("sold", 200),
+         ("pending", 200),
+         ]
+    )
+    def test_get_pets_by_status_success(self, status_success, expected_status_code_success):
+        with allure.step(f"Отправка запроса на получение питомца по успешному статусу {status_success}"):
+            response = requests.get(url=f"{BASE_URL}/pet/findByStatus", params={"status":{status_success}})
+
+        with allure.step("Проверка статуса ответа и формата данных"):
+            assert response.status_code == expected_status_code_success
             assert isinstance(response.json(), list)
+
+    # Негативный сценарий_не успешный статус 400
+    @allure.title("Получение ошибки по не успешному статусу")
+    @pytest.mark.parametrize(
+        "status_failed, expected_status_code_failed",
+        [
+         (" ", 400),
+         ("failed", 400)
+         ]
+    )
+    def test_get_pets_by_status_failed(self, status_failed, expected_status_code_failed):
+        with allure.step(f"Отправка запроса на получение питомца по не успешному статусу {status_failed}"):
+            response = requests.get(url=f"{BASE_URL}/pet/findByStatus", params={"status": {status_failed}})
+
+        with allure.step("Проверка статуса ответа и формата данных"):
+            assert response.status_code == expected_status_code_failed
+            assert isinstance(response.json(), dict)
