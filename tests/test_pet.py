@@ -143,28 +143,6 @@ class TestPet:
             assert response.status_code == 404, "Код ответа не совпал с ожидаемым"
 
     #35 TestIT Получение списка питомцев по статусу
-    @allure.title("Получение списка питомцев по статусу")
-    @pytest.mark.parametrize(
-        "status, expected_status_code",
-        [("available", 200),
-         ("sold", 200),
-         ("pending", 200),
-         (" ", 400),
-         ("failed", 400),
-         ]
-    )
-    def test_get_pets_by_status(self, status, expected_status_code):
-        with allure.step(f"Отправка запроса на получение питомца по статусу {status}"):
-            response = requests.get(url=f"{BASE_URL}/pet/findByStatus", params={"status":{status}})
-
-    #вариант с логикой в одном тесте для разных статусов
-        with allure.step("Проверка статуса ответа и формата данных"):
-            assert response.status_code == expected_status_code
-            if expected_status_code == 200:
-                assert isinstance(response.json(), list)
-            elif expected_status_code == 400:
-                assert isinstance(response.json(), dict)
-
     #Разделил на 2 отдельных теста позитивный и негативный сценарий
     #Позитивный сценарий_успешный статус 200
     @allure.title("Получение списка питомцев по успешному статусу")
