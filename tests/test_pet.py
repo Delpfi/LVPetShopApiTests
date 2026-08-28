@@ -1,5 +1,6 @@
 import allure
 import jsonschema
+import pytest
 import requests
 from tests.schemas.pet_schema import PET_SCHEMA
 BASE_URL = "http://5.181.109.28:9090/api/v3"
@@ -140,3 +141,39 @@ class TestPet:
         with allure.step("Отправка запроса на получение информации по удаленному питомцу"):
             response = requests.get(url=f"{BASE_URL}/pet/{pet_id}")
             assert response.status_code == 404, "Код ответа не совпал с ожидаемым"
+
+    #35 TestIT Получение списка питомцев по статусу
+    #Разделил на 2 отдельных теста позитивный и негативный сценарий
+    #Позитивный сценарий_успешный статус 200
+    @allure.title("Получение списка питомцев по успешному статусу")
+    @pytest.mark.parametrize(
+        "status_success, expected_status_code_success",
+        [("available", 200),
+         ("sold", 200),
+         ("pending", 200),
+         ]
+    )
+    def test_get_pets_by_status_success(self, status_success, expected_status_code_success):
+        with allure.step(f"Отправка запроса на получение питомца по успешному статусу {status_success}"):
+            response = requests.get(url=f"{BASE_URL}/pet/findByStatus", params={"status":{status_success}})
+
+        with allure.step("Проверка статуса ответа и формата данных"):
+            assert response.status_code == expected_status_code_success
+            assert isinstance(response.json(), list)
+
+    # Негативный сценарий_не успешный статус 400
+    @allure.title("Получение ошибки по не успешному статусу")
+    @pytest.mark.parametrize(
+        "status_failed, expected_status_code_failed",
+        [
+         (" ", 400),
+         ("failed", 400)
+         ]
+    )
+    def test_get_pets_by_status_failed(self, status_failed, expected_status_code_failed):
+        with allure.step(f"Отправка запроса на получение питомца по не успешному статусу {status_failed}"):
+            response = requests.get(url=f"{BASE_URL}/pet/findByStatus", params={"status": {status_failed}})
+
+        with allure.step("Проверка статуса ответа и формата данных"):
+            assert response.status_code == expected_status_code_failed
+            assert isinstance(response.json(), dict)
