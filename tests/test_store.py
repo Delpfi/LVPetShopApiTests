@@ -46,7 +46,7 @@ class TestStore:
         with allure.step("Отправить запрос на получения информации о закаке по ID"):
             response = requests.get(url=f"{BASE_URL}/store/order/{order_id}")
             assert response.status_code == 200
-            assert response.json()["id"] == 1
+            assert response.json()["id"] == order_id
 
     #44 TestIT Удаление заказа по ID (DELETE /store/order/{orderId}) LV
     @allure.title("Удаление заказа по ID")
